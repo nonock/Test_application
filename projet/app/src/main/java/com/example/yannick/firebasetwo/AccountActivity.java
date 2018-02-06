@@ -1,10 +1,14 @@
 package com.example.yannick.firebasetwo;
 
 import android.content.Intent;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -15,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class AccountActivity extends AppCompatActivity {
@@ -31,6 +36,12 @@ public class AccountActivity extends AppCompatActivity {
     private long nbr = 0;
     private int a;
 
+    private ImageView img;
+
+    private ListView lv;
+    private ArrayList<ImageView> list=new ArrayList<>();
+    private ArrayAdapter<ImageView> adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +50,13 @@ public class AccountActivity extends AppCompatActivity {
         param = (Button) findViewById(R.id.buttonParam);
         planet = (TextView) findViewById(R.id.textP);
         nbrUser = (TextView) findViewById(R.id.textNbr);
+
+        img = (ImageView) findViewById(R.id.test1);
+
+        //lv=(ListView)findViewById(R.id.listview_contacts);
+
+        //adapter = new ArrayAdapter<ImageView>(this,android.R.layout.simple_dropdown_item_1line,list);
+        //.setAdapter(adapter);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -84,11 +102,22 @@ public class AccountActivity extends AppCompatActivity {
                 if(dataSnapshot.exists())
                 {
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if(map.get("idPlant") != null)
+                    if(map.get("idPlanet") != null)
                     {
                         idplanet = map.get("idPlanet").toString();
-                        planet.setText(idplanet);
+                        //planet.setText(idplanet);
 
+                    }
+                    nbr = dataSnapshot.getChildrenCount();
+                    for(int i = 0; i < nbr + 1; i++)
+                    {
+                        String buff = userID + String.valueOf(i);
+                        planet.setText(buff);
+                        if(map.get(buff) != null)
+                        {
+                            Glide.with(getApplication()).load(buff).into(img);
+                            //adapter.notifyDataSetChanged();
+                        }
                     }
                 }
             }
